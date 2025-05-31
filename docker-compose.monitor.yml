@@ -5,7 +5,8 @@ services:
     ports:
       - "9092:9090"
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
       - prometheus-data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -84,6 +85,17 @@ services:
       - '--storage.path=/alertmanager'
     ports:
       - "9099:9093"
+    networks:
+      - app_network
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter:latest
+    ports:
+      - "9115:9115"
+    volumes:
+      - ./blackbox/blackbox.yml:/etc/blackbox_exporter/config.yml:ro
+    command:
+      - "--config.file=/etc/blackbox_exporter/config.yml"
     networks:
       - app_network
 

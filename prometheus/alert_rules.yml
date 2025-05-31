@@ -173,7 +173,6 @@ groups:
   # Alertmanager Alerts (monitoring the monitor)
   - name: alertmanager
     rules:
-      # Alertmanager Down
       - alert: AlertmanagerDown
         expr: up{job="alertmanager"} == 0
         for: 1m
