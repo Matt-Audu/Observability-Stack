@@ -46,14 +46,17 @@ services:
     image: grafana/promtail:latest
     restart: unless-stopped
     volumes:
-      - ./promtail/promtail-config.yml:/etc/promtail/docker-config.yml
+      - ./promtail/promtail-config.yml:/etc/promtail/promtail.yml
       - /var/log:/var/log:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock
-    command: -config.file=/etc/promtail/docker-config.yml
+      - /tmp:/tmp
+    command: -config.file=/etc/promtail/promtail.yml
     depends_on:
       - loki
     networks:
       - app_network
+
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
