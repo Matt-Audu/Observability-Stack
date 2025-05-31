@@ -1,0 +1,15 @@
+__pycache__
+app.egg-info
+*.pyc
+.mypy_cache
+.coverage
+htmlcov
+.cache
+.venv
+README.md:Zone.Identifier
+pyproject.toml:Zone.Identifier
+prestart.sh:Zone.Identifier
+poetry.lock:Zone.Identifier
+alembic.ini:Zone.Identifier
+.gitignore:Zone.Identifier
+*Zone.Identifier

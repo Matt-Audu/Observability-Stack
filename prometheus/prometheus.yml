@@ -1,0 +1,85 @@
+global:
+  # How frequently to scrape targets by default
+  scrape_interval: 15s
+  
+  # How long until a scrape request times out
+  scrape_timeout: 15s
+  
+  # How frequently to evaluate rules
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - "alertmanager:9093"  # Alertmanager address
+      # Optional: Add path prefix if Alertmanager is behind a reverse proxy
+      # path_prefix: /alertmanager
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'
+rule_files:
+  - "alert_rules.yml"
+  - "recording_rules.yml"
+  # - "/path/to/other/rules/*.yml"
+
+scrape_configs:
+
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    metrics_path: /metrics
+    scrape_interval: 30s
+    scrape_timeout: 15s
+
+  # Application monitoring
+  - job_name: 'Applications'
+    static_configs:
+      - targets:
+        - 'frontend:3000'
+        - 'backend:8000'
+    metrics_path: /metrics
+    scrape_interval: 10s
+    scrape_timeout: 8s
+
+  # Docker containers (if using cAdvisor)
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets:
+        - ['cadvisor:8080']
+    metrics_path: /metrics
+    scrape_interval: 10s
+    scrape_timeout: 8s
+
+  - job_name: 'loki'
+    static_configs:
+      - targets:
+        - ['loki:3100']
+    metrics_path: /metrics
+    scrape_interval: 10s
+    scrape_timeout: 8s
+
+  - job_name: 'alertmanager'
+    static_configs:
+      - targets:
+        - ['alertmanager:3100']
+    metrics_path: /metrics
+    scrape_interval: 10s
+    scrape_timeout: 8s
+
+  - job_name: 'postgres'
+    static_configs:
+      - targets:
+        - ['postgres_exporter:9187']
+    metrics_path: /metrics
+    scrape_interval: 20s
+    scrape_timeout: 15s
+
+  
+
+
+
+# Storage configuration
+# storage:
+#   tsdb:
+#     retention.time: 30d
+#     retention.size: 10GB

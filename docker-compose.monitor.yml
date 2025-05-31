@@ -1,0 +1,131 @@
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    ports:
+      - "9092:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.enable-lifecycle'
+    networks:
+      - app_network
+
+  grafana:
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: $GRAFANA_ADMIN_USER
+      GF_SECURITY_ADMIN_PASSWORD: $GRAFANA_ADMIN_PASSWORD
+    ports:
+      - 3004:3000
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - app_network
+
+  loki:
+    image: grafana/loki:latest
+    restart: unless-stopped
+    ports:
+      - "3084:3100"
+    command: -config.file=/etc/loki/loki.yml
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/loki.yml
+      - loki-data:/loki
+    networks:
+      - app_network
+
+  promtail:
+    image: grafana/promtail:latest
+    restart: unless-stopped
+    volumes:
+      - ./promtail/promtail-config.yml:/etc/promtail/docker-config.yml
+      - /var/log:/var/log:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/docker-config.yml
+    depends_on:
+      - loki
+    networks:
+      - app_network
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    restart: unless-stopped
+    ports:
+      - 8082:8080
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - app_network
+    command:
+      - --housekeeping_interval=10s
+      - --docker_only=true
+    privileged: true
+    devices:
+      - /dev/kmsg
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    restart: unless-stopped
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager.yml
+      - alertmanager-data:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    ports:
+      - "9099:9093"
+    networks:
+      - app_network
+
+  postgres_exporter:
+    image: prometheuscommunity/postgres-exporter
+    restart: unless-stopped
+    environment:
+      DATA_SOURCE_NAME: $DATA_SOURCE
+    ports:
+      - "9187:9187"
+    networks:
+      - app_network
+
+  telegram-bot:
+    image: metalmatze/alertmanager-bot:0.4.3
+    restart: unless-stopped
+    environment:
+      ALERTMANAGER_URL: $ALERTMANAGER_URL_ID
+      BOLT_PATH: /data/bot.db
+      STORE: bolt
+      TELEGRAM_ADMIN: $TELEGRAM_ADMIN_ID
+      TELEGRAM_TOKEN: $TELEGRAM_TOKEN_API
+    volumes:
+    - telegram-bot-data:/data
+    ports:
+    - "8072:8080"
+    depends_on:
+      - alertmanager
+    networks:
+      - app_network
+    
+
+
+networks:
+  app_network:
+    external: true
+    driver: bridge
+
+volumes:
+  prometheus-data:
+  grafana-storage:
+  loki-data:
+  alertmanager-data:
+  telegram-bot-data:
+    
