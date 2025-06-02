@@ -38,14 +38,16 @@ services:
   
   adminer:
     image: adminer:latest
+    container_name: adminer
     restart: unless-stopped
     ports:
-      - 8080:8080
+      - 8081:8080
     networks:
       - app_network
 
   nginxproxymanager:
     image: 'jc21/nginx-proxy-manager:latest'
+    container_name: nginxproxymanager
     restart: unless-stopped
     ports:
       - '80:80'
