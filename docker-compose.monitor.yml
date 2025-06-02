@@ -135,7 +135,6 @@ services:
 networks:
   app_network:
     external: true
-    driver: bridge
 
 volumes:
   prometheus-data:
