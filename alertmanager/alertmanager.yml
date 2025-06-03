@@ -11,9 +11,9 @@ route:
 receivers:
 - name: 'stardata-telegram'
   telegram_configs:
-  - bot_token: 7775771608:AAFptVq56HbJXvEb91M_YVEXkmwMNHcKRe8
+  - bot_token: ${TELEGRAM_TOKEN_API}
     api_url: https://api.telegram.org
-    chat_id: 5302987336
+    chat_id: ${TELEGRAM_CHAT_ID}
     parse_mode: ''
     send_resolved: true
     message: |
