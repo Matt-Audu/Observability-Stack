@@ -236,13 +236,3 @@ groups:
           description: "SSL certificate for {{ $labels.instance }} has expired"
 
 
-  - name: example_alerts
-    rules:
-      - alert: TestAlertFiring
-        expr: vector(1)
-        for: 0m
-        labels:
-          severity: critical
-        annotations:
-          summary: "This is a test alert"
-          description: "This alert is always firing for test purposes"

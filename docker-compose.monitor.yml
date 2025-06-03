@@ -87,7 +87,7 @@ services:
     container_name: alertmanager
     restart: unless-stopped
     volumes:
-      - ./alertmanager/alertmanager.yml:/etc/alertmanager.yml
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
       - alertmanager-data:/alertmanager
     command:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
@@ -117,26 +117,6 @@ services:
       DATA_SOURCE_NAME: $DATA_SOURCE
     ports:
       - "9187:9187"
-    networks:
-      - app_network
-
-  telegram-bot:
-    image: metalmatze/alertmanager-bot:0.4.3
-    container_name: telegram-bot
-    restart: unless-stopped
-    environment:
-      ALERTMANAGER_URL: $ALERTMANAGER_URL_ID
-      BOLT_PATH: /data/bot.db
-      STORE: bolt
-      TELEGRAM_ADMIN: $TELEGRAM_ADMIN_ID
-      TELEGRAM_TOKEN: $TELEGRAM_TOKEN_API
-      TELEGRAM_ALLOWED_USERS: $TELEGRAM_ALLOWED_USER
-    volumes:
-    - telegram-bot-data:/data
-    ports:
-    - "8072:8080"
-    depends_on:
-      - alertmanager
     networks:
       - app_network
     

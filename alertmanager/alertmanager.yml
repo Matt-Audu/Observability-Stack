@@ -1,22 +1,26 @@
 global:
-  resolve_timeout: 5m
+  telegram_api_url: 'https://api.telegram.org'
 
 route:
-  receiver: 'telegram-bot'
   group_by: ['alertname']
   group_wait: 10s
-  group_interval: 30s
+  group_interval: 10s
   repeat_interval: 1h
+  receiver: 'stardata-telegram'
 
 receivers:
-  - name: 'telegram-bot'
-    webhook_configs:
-      - url: 'http://telegram-bot:8080/api/alerts'
-        send_resolved: true
-
-inhibit_rules:
-  - source_match:
-      severity: 'critical'
-    target_match:
-      severity: 'warning'
-    equal: ['alertname', 'instance']
+- name: 'stardata-telegram'
+  telegram_configs:
+  - bot_token: 7775771608:AAFptVq56HbJXvEb91M_YVEXkmwMNHcKRe8
+    api_url: https://api.telegram.org
+    chat_id: 5302987336
+    parse_mode: ''
+    send_resolved: true
+    message: |
+      🚨 *{{ .Status | toUpper }}*
+      
+      {{ range .Alerts }}
+      *Alert:* {{ .Annotations.summary }}
+      *Instance:* {{ .Labels.instance }}
+      *Time:* {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+      {{ end }}
