@@ -17,10 +17,24 @@ receivers:
     parse_mode: ''
     send_resolved: true
     message: |
-      🚨 *{{ .Status | toUpper }}*
-      
-      {{ range .Alerts }}
-      *Alert:* {{ .Annotations.summary }}
-      *Instance:* {{ .Labels.instance }}
-      *Time:* {{ .StartsAt.Format "2006-01-02 15:04:05" }}
-      {{ end }}
+    
+        🚨 *{{ .Status | toUpper }}* ‼️  
+        {{ if eq .Status "firing" }}🔥 *Alert Triggered* 🔥{{ else }}✅ *Alert Resolved* ✅{{ end }} 
+        ====================================  
+
+        {{ range .Alerts }}
+        *📌 Summary:*  
+        {{ .Annotations.summary }}  
+
+        *🌐 Instance Affected:*  
+        `{{ .Labels.instance }}`  
+
+        *🕒 Triggered At:*  
+        {{ .StartsAt.Format "2006-01-02 15:04:05 UTC" }}  
+
+        {{ if .Annotations.description }}
+        *📝 Details:*  
+        {{ .Annotations.description }}  
+        {{ end }}
+        ====================================  
+        {{ end }}

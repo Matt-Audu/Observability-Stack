@@ -111,7 +111,7 @@ services:
       - app_network
 
   postgres_exporter:
-    image: prometheuscommunity/postgres-exporter
+    image: prometheuscommunity/postgres-exporter:latest
     container_name: postgres_exporter
     restart: unless-stopped
     environment:
@@ -120,6 +120,9 @@ services:
       - "9187:9187"
     networks:
       - app_network
+    labels:
+      - "prometheus.scrape=true"
+      - "prometheus.port=9187"
     
 
 
@@ -132,5 +135,4 @@ volumes:
   grafana-storage:
   loki-data:
   alertmanager-data:
-  telegram-bot-data:
     
