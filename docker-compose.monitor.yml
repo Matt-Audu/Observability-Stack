@@ -82,21 +82,32 @@ services:
     devices:
       - /dev/kmsg
 
+  alertmanager-config:
+    image: alpine:latest
+    container_name: alertmanager-config
+    volumes:
+      - ./alertmanager/alertmanager.yml.tpl:/tmp/alertmanager.yml.tpl
+      - config-volume:/config
+    env_file: .env
+    command: sh -c "apk add --no-cache gettext && envsubst < /tmp/alertmanager.yml.tpl > /config/alertmanager.yml"
+    networks:
+      - app_network
+
   alertmanager:
     image: prom/alertmanager:latest
     container_name: alertmanager
     restart: unless-stopped
     env_file: .env
     volumes:
-      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - config-volume:/etc/alertmanager
       - alertmanager-data:/alertmanager
-    command:
-      - '--config.file=/etc/alertmanager/alertmanager.yml'
-      - '--storage.path=/alertmanager'
     ports:
       - "9099:9093"
     networks:
       - app_network
+    depends_on:
+      - alertmanager-config
+
 
   blackbox-exporter:
     image: prom/blackbox-exporter:latest
@@ -135,4 +146,6 @@ volumes:
   grafana-storage:
   loki-data:
   alertmanager-data:
+  config-volume:
+    
     
