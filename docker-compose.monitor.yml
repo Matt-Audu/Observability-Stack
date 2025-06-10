@@ -88,8 +88,14 @@ services:
     volumes:
       - ./alertmanager/alertmanager.yml.tpl:/tmp/alertmanager.yml.tpl
       - config-volume:/config
+      - ./alertmanager/templates:/tmp/templates:ro
     env_file: .env
-    command: sh -c "apk add --no-cache gettext && envsubst < /tmp/alertmanager.yml.tpl > /config/alertmanager.yml"
+    command: sh -c "
+      apk add --no-cache gettext &&
+      mkdir -p /config/templates &&
+      envsubst < /tmp/alertmanager.yml.tpl > /config/alertmanager.yml &&
+      cp -v /tmp/templates/* /config/templates/ &&
+      ls -la /config/templates/"
     networks:
       - app_network
 

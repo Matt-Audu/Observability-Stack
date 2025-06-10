@@ -1,0 +1,18 @@
+{{ define "telegram.unified.message" }}
+{{ if eq .Status "firing" }}{{ if eq .CommonLabels.severity "critical" }}🚨 <b>FIRING: CRITICAL ALERT</b> 🚨
+{{ else if eq .CommonLabels.severity "warning" }}⚠️ <b>FIRING: WARNING</b> ⚠️
+{{ else }}🔔 <b>FIRING: ALERT</b> 🔔{{ end }}
+{{ else }}✅ <b>RESOLVED</b> ✅{{ end }}
+
+<b>{{ .CommonLabels.alertname }}</b>
+
+{{ if .CommonAnnotations.summary }}• <b>Summary:</b> {{ .CommonAnnotations.summary }}{{ end }}
+{{ if .CommonAnnotations.description }}• <b>Details:</b> {{ .CommonAnnotations.description }}{{ end }}
+
+{{ if .CommonLabels.instance }}• <b>Instance:</b> <code>{{ .CommonLabels.instance }}</code>{{ end }}
+{{ if .CommonLabels.job }}• <b>Job:</b> <code>{{ .CommonLabels.job }}</code>{{ end }}
+
+{{ if .GeneratorURL }}• <a href="{{ .GeneratorURL }}">View details</a>{{ end }}
+
+{{ if gt (len .Alerts.Firing) 1 }}• <b>Total firing:</b> {{ len .Alerts.Firing }}{{ end }}
+{{ end }}
