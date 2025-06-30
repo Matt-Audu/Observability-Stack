@@ -2,6 +2,7 @@ import sentry_sdk
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.api.main import api_router
 from app.core.config import settings
@@ -19,6 +20,9 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     generate_unique_id_function=custom_generate_unique_id,
 )
+
+Instrumentator().instrument(app).expose(app, include_in_schema=True, tags=["metrics"])
+
 
 # Set all CORS enabled origins
 if settings.BACKEND_CORS_ORIGINS:
