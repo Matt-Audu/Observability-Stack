@@ -81,7 +81,7 @@ groups:
       summary: "High load average on {{ $labels.instance }}"
       description: "Load average (1 min) on {{ $labels.instance }} is {{ printf \"%.2f\" $value }}, which is high for the available CPU cores."
 
-- name: applications
+- name: Applications
   rules:
   # High HTTP Error Rate
   - alert: HighHTTPErrorRate
@@ -113,9 +113,9 @@ groups:
       summary: "High response time for {{ $labels.job }}"
       description: "The 95th percentile response time for job {{ $labels.job }} is {{ printf \"%.2f\" $value }}s."
 
-- name: database
+  # Database down
+- name: Database
   rules:
-  # Database Down
   - alert: PostgreSQLDown
     expr: pg_up == 0
     for: 1m
@@ -125,7 +125,7 @@ groups:
       summary: "PostgreSQL is down"
       description: "PostgreSQL database on instance {{ $labels.instance }} is not responding."
 
-- name: containers
+- name: Containers
   rules:
   # Container Down
   - alert: ContainerDown
