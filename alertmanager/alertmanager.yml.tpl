@@ -7,8 +7,8 @@ templates:
 
 route:
   group_by: ['alertname', 'severity']
-  group_wait: 30s
-  group_interval: 5m
+  group_wait: 10s
+  group_interval: 30s
   repeat_interval: 3h
   receiver: 'telegram-all-alerts'
 
@@ -18,6 +18,6 @@ receivers:
   - bot_token: ${TELEGRAM_TOKEN_API}
     api_url: https://api.telegram.org
     chat_id: ${TELEGRAM_CHAT_ID}
-    parse_mode: ''
+    parse_mode: 'HTML'
     send_resolved: true
     message: '{{ template "telegram.unified.message" . }}'

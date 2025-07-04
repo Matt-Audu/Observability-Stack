@@ -21,7 +21,7 @@ scrape_configs:
     scrape_interval: 30s
     scrape_timeout: 15s
 
-  - job_name: 'Applications'
+  - job_name: 'backend'
     static_configs:
       - targets:
         - 'backend:8000'

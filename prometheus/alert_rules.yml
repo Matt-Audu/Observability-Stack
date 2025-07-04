@@ -113,16 +113,6 @@ groups:
       summary: "High response time for {{ $labels.job }}"
       description: "The 95th percentile response time for job {{ $labels.job }} is {{ printf \"%.2f\" $value }}s."
 
-  # Application Down
-  - alert: ApplicationDown
-    expr: up{job=~"frontend|backend|Applications"} == 0
-    for: 1m
-    labels:
-      severity: critical
-    annotations:
-      summary: "Application {{ $labels.job }} is down"
-      description: "Application {{ $labels.job }} on instance {{ $labels.instance }} is not responding."
-
 - name: database
   rules:
   # Database Down
